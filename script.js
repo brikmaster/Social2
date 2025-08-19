@@ -51,6 +51,7 @@ class MultiPlatformSocialGenerator {
         this.saveApiKeysBtn = document.getElementById('saveApiKeys');
         this.reconfigureBtn = document.getElementById('reconfigureApi');
         this.resetApiBtn = document.getElementById('resetApi');
+        this.testHfBtn = document.getElementById('testHfApi');
         
         // Status elements
         this.modelsStatus = document.getElementById('modelsStatus');
@@ -72,6 +73,10 @@ class MultiPlatformSocialGenerator {
         
         this.resetApiBtn.addEventListener('click', () => {
             this.resetApiSetup();
+        });
+        
+        this.testHfBtn.addEventListener('click', () => {
+            this.testHuggingFaceApi();
         });
 
         // Platform tab switching
@@ -206,6 +211,59 @@ class MultiPlatformSocialGenerator {
             
             this.modelsStatus.appendChild(statusDiv);
         });
+    }
+
+    async testHuggingFaceApi() {
+        const hfApiKey = this.apiKeys.huggingface;
+        
+        if (!hfApiKey) {
+            alert('Please configure your Hugging Face API key first.');
+            this.showApiSetup();
+            return;
+        }
+        
+        try {
+            this.testHfBtn.textContent = 'Testing...';
+            this.testHfBtn.disabled = true;
+            
+            const response = await fetch('/api/test-hf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    apiKey: hfApiKey
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('✅ Hugging Face API test successful!\n\nYour API key is working correctly.');
+            } else {
+                let errorMsg = `❌ Hugging Face API test failed:\n\n`;
+                errorMsg += `Status: ${result.status}\n`;
+                errorMsg += `Error: ${result.body}\n`;
+                errorMsg += `URL: ${result.url || 'Unknown'}\n\n`;
+                
+                if (result.status === 401) {
+                    errorMsg += `This looks like an authentication error. Please check:\n`;
+                    errorMsg += `- Your API key starts with 'hf_'\n`;
+                    errorMsg += `- Your API key is valid and not expired\n`;
+                    errorMsg += `- You generated it from huggingface.co/settings/tokens`;
+                } else if (result.status === 404) {
+                    errorMsg += `Model not found. This might indicate a problem with the API endpoint.`;
+                }
+                
+                alert(errorMsg);
+            }
+            
+        } catch (error) {
+            alert(`❌ Test failed with network error:\n\n${error.message}`);
+        } finally {
+            this.testHfBtn.textContent = 'Test HF API';
+            this.testHfBtn.disabled = false;
+        }
     }
 
     async generateAllPlatforms() {
