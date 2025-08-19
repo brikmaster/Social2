@@ -18,8 +18,8 @@ class MultiPlatformSocialGenerator {
             { provider: 'openai', model: 'gpt-4o', name: 'GPT-4o Standard' },
             { provider: 'anthropic', model: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4' },
             { provider: 'gemini', model: 'gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash' },
-            { provider: 'huggingface', model: 'microsoft/DialoGPT-medium', name: 'DialoGPT Medium' },
-            { provider: 'huggingface', model: 'gpt2', name: 'GPT-2' }
+            { provider: 'huggingface', model: 'gpt2', name: 'GPT-2' },
+            { provider: 'huggingface', model: 'distilgpt2', name: 'DistilGPT-2' }
         ];
 
         this.apiKeys = {};

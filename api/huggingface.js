@@ -39,18 +39,17 @@ export default async function handler(req, res) {
         }
         
         console.log(`Hugging Face request for model: ${model}`);
+        console.log(`API Key format: ${apiKey.substring(0, 3)}...${apiKey.substring(apiKey.length - 3)}`);
+        console.log(`Full URL: https://api-inference.huggingface.co/models/${model}`);
         
-        // Format the prompt based on the model
+        // Format the prompt based on the model - keep it very simple
         let formattedPrompt;
-        if (model.includes('DialoGPT')) {
-            // DialoGPT expects simple conversational format
-            formattedPrompt = `You are a social media expert. Create an engaging social media post for the following: ${prompt}`;
-        } else if (model === 'gpt2') {
-            // GPT-2 expects simple prompt completion
-            formattedPrompt = `Social media post: ${prompt}\n\nEngaging post:`;
+        if (model === 'gpt2' || model === 'distilgpt2') {
+            // GPT-2 family expects simple prompt completion
+            formattedPrompt = `Write a social media post about: ${prompt}\n\nPost:`;
         } else {
             // Generic simple format for basic models
-            formattedPrompt = `Create a social media post: ${prompt}`;
+            formattedPrompt = `Social media post about ${prompt}:`;
         }
         
         const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
@@ -75,6 +74,8 @@ export default async function handler(req, res) {
         if (!response.ok) {
             const errorData = await response.text();
             console.error(`Hugging Face API Error ${response.status}:`, errorData);
+            console.error(`Request URL: https://api-inference.huggingface.co/models/${model}`);
+            console.error(`API Key starts with: ${apiKey.substring(0, 10)}...`);
             
             // Handle common Hugging Face API errors
             if (response.status === 503) {
@@ -88,7 +89,7 @@ export default async function handler(req, res) {
             if (response.status === 404) {
                 res.status(404).json({ 
                     error: 'Model not found or requires special access.',
-                    details: 'Some models like Llama require accepting a license agreement on Hugging Face first. Try using a different model or check the model page on huggingface.co'
+                    details: `Model '${model}' not found. Full error: ${errorData}. Check if your API key is valid and has the correct format (should start with 'hf_').`
                 });
                 return;
             }
@@ -96,7 +97,15 @@ export default async function handler(req, res) {
             if (response.status === 403) {
                 res.status(403).json({ 
                     error: 'Access denied to this model.',
-                    details: 'This model may require accepting a license agreement or have access restrictions. Check the model page on huggingface.co'
+                    details: `Access forbidden. Full error: ${errorData}. Your API key may be invalid or expired.`
+                });
+                return;
+            }
+            
+            if (response.status === 401) {
+                res.status(401).json({ 
+                    error: 'Invalid API key.',
+                    details: `Authentication failed. Please check your Hugging Face API key. It should start with 'hf_' and be from huggingface.co/settings/tokens`
                 });
                 return;
             }
