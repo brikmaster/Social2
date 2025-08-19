@@ -56,6 +56,14 @@ ${prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
             formattedPrompt = `<s>[INST] You are a social media expert who creates engaging posts. Create unique, high-quality content optimized for the specified platform. Be creative, engaging, and authentic.
 
 ${prompt} [/INST]`;
+        } else if (model.includes('zephyr')) {
+            // Zephyr format
+            formattedPrompt = `<|system|>
+You are a social media expert who creates engaging posts. Create unique, high-quality content optimized for the specified platform. Be creative, engaging, and authentic.</s>
+<|user|>
+${prompt}</s>
+<|assistant|>
+`;
         } else {
             // Generic chat format
             formattedPrompt = `<|system|>
