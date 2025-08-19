@@ -40,14 +40,31 @@ export default async function handler(req, res) {
         
         console.log(`Hugging Face request for model: ${model}`);
         
-        // Format the prompt for Llama 3.1 Instruct format
-        const formattedPrompt = `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+        // Format the prompt based on the model
+        let formattedPrompt;
+        if (model.includes('llama') || model.includes('Llama')) {
+            // Llama 3.1 Instruct format
+            formattedPrompt = `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 
 You are a social media expert who creates engaging posts. Create unique, high-quality content optimized for the specified platform. Be creative, engaging, and authentic.<|eot_id|><|start_header_id|>user<|end_header_id|>
 
 ${prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 
 `;
+        } else if (model.includes('Mixtral') || model.includes('mistral')) {
+            // Mixtral/Mistral format
+            formattedPrompt = `<s>[INST] You are a social media expert who creates engaging posts. Create unique, high-quality content optimized for the specified platform. Be creative, engaging, and authentic.
+
+${prompt} [/INST]`;
+        } else {
+            // Generic chat format
+            formattedPrompt = `<|system|>
+You are a social media expert who creates engaging posts. Create unique, high-quality content optimized for the specified platform. Be creative, engaging, and authentic.<|end|>
+<|user|>
+${prompt}<|end|>
+<|assistant|>
+`;
+        }
         
         const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
             method: 'POST',
@@ -123,7 +140,9 @@ ${prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
         
         // Clean up the content by removing any remaining special tokens
         content = content
-            .replace(/<\|[^|]+\|>/g, '') // Remove any remaining Llama special tokens
+            .replace(/<\|[^|]+\|>/g, '') // Remove Llama special tokens
+            .replace(/<s>|<\/s>/g, '') // Remove Mixtral special tokens
+            .replace(/\[INST\]|\[\/INST\]/g, '') // Remove instruction tokens
             .trim();
         
         res.status(200).json({
