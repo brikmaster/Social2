@@ -17,7 +17,8 @@ class MultiPlatformSocialGenerator {
             // Working models - tested one by one
             { provider: 'openai', model: 'gpt-4o', name: 'GPT-4o Standard' },
             { provider: 'anthropic', model: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4' },
-            { provider: 'gemini', model: 'gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash' }
+            { provider: 'gemini', model: 'gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash' },
+            { provider: 'huggingface', model: 'meta-llama/Meta-Llama-3.1-8B-Instruct', name: 'Llama 3.1 8B Instruct' }
         ];
 
         this.apiKeys = {};
@@ -45,6 +46,7 @@ class MultiPlatformSocialGenerator {
         this.openaiKeyInput = document.getElementById('openaiKey');
         this.anthropicKeyInput = document.getElementById('anthropicKey');
         this.geminiKeyInput = document.getElementById('geminiKey');
+        this.huggingfaceKeyInput = document.getElementById('huggingfaceKey');
         this.saveApiKeysBtn = document.getElementById('saveApiKeys');
         this.reconfigureBtn = document.getElementById('reconfigureApi');
         this.resetApiBtn = document.getElementById('resetApi');
@@ -107,7 +109,7 @@ class MultiPlatformSocialGenerator {
 
     checkFirstRun() {
         const hasRunBefore = localStorage.getItem('api-setup-completed');
-        const hasApiKeys = this.apiKeys.openai || this.apiKeys.anthropic || this.apiKeys.gemini;
+        const hasApiKeys = this.apiKeys.openai || this.apiKeys.anthropic || this.apiKeys.gemini || this.apiKeys.huggingface;
         
         console.log('First run check:', { hasRunBefore, hasApiKeys, apiKeys: this.apiKeys });
         
@@ -125,6 +127,7 @@ class MultiPlatformSocialGenerator {
         localStorage.removeItem('api-key-openai');
         localStorage.removeItem('api-key-anthropic');
         localStorage.removeItem('api-key-gemini');
+        localStorage.removeItem('api-key-huggingface');
         this.loadApiKeys();
         this.showApiSetup();
     }
@@ -134,6 +137,7 @@ class MultiPlatformSocialGenerator {
         this.openaiKeyInput.value = this.apiKeys.openai || '';
         this.anthropicKeyInput.value = this.apiKeys.anthropic || '';
         this.geminiKeyInput.value = this.apiKeys.gemini || '';
+        this.huggingfaceKeyInput.value = this.apiKeys.huggingface || '';
     }
 
     hideApiSetup() {
@@ -144,7 +148,8 @@ class MultiPlatformSocialGenerator {
         const keys = {
             openai: this.openaiKeyInput.value.trim(),
             anthropic: this.anthropicKeyInput.value.trim(),
-            gemini: this.geminiKeyInput.value.trim()
+            gemini: this.geminiKeyInput.value.trim(),
+            huggingface: this.huggingfaceKeyInput.value.trim()
         };
 
         Object.keys(keys).forEach(provider => {
@@ -168,7 +173,8 @@ class MultiPlatformSocialGenerator {
         this.apiKeys = {
             openai: localStorage.getItem('api-key-openai') || '',
             anthropic: localStorage.getItem('api-key-anthropic') || '',
-            gemini: localStorage.getItem('api-key-gemini') || ''
+            gemini: localStorage.getItem('api-key-gemini') || '',
+            huggingface: localStorage.getItem('api-key-huggingface') || ''
         };
 
         this.activeModels = this.availableModels.filter(model => {
@@ -348,7 +354,8 @@ class MultiPlatformSocialGenerator {
         const proxyEndpoints = {
             openai: '/api/openai',
             anthropic: '/api/anthropic',
-            gemini: '/api/gemini'
+            gemini: '/api/gemini',
+            huggingface: '/api/huggingface'
         };
 
         const requestBody = {
@@ -400,7 +407,8 @@ class MultiPlatformSocialGenerator {
         const proxyEndpoints = {
             openai: '/api/openai',
             anthropic: '/api/anthropic',
-            gemini: '/api/gemini'
+            gemini: '/api/gemini',
+            huggingface: '/api/huggingface'
         };
 
         const requestBody = {
