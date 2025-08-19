@@ -18,7 +18,7 @@ class MultiPlatformSocialGenerator {
             { provider: 'openai', model: 'gpt-4o', name: 'GPT-4o Standard' },
             { provider: 'anthropic', model: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4' },
             { provider: 'gemini', model: 'gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash' },
-            { provider: 'huggingface', model: 'microsoft/Phi-3.5-mini-instruct', name: 'Phi-3.5 Mini Instruct' }
+            { provider: 'huggingface', model: 'meta-llama/Llama-3.1-8B-Instruct', name: 'Llama 3.1 8B Instruct' }
         ];
 
         this.apiKeys = {};
