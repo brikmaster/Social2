@@ -1,0 +1,8 @@
+{
+  "name": "Social2",
+  "version": "1.0.0",
+  "description": "Social media management tool",
+  "dependencies": {
+    "@anthropic-ai/claude-code": "^1.0.77"
+  }
+}

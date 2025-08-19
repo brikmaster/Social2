@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social2 - AI-Powered Social Media Post Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Social2 - AI-Powered Social Media Post Generator</h1>
+            <p>Create viral-worthy, highly engaging posts optimized for maximum user interaction</p>
+        </header>
+
+        <!-- API Setup Modal -->
+        <div id="apiSetupModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>AI Setup - One Time Configuration</h2>
+                    <p>Enter your API keys to unlock highly engaging, viral-worthy content generation designed to maximize user interaction</p>
+                </div>
+                <div class="modal-body">
+                    <div class="api-setup-group">
+                        <label for="openaiKey">OpenAI API Key (Optional):</label>
+                        <input type="password" id="openaiKey" placeholder="sk-...">
+                        <small>For GPT-4o, GPT-4o-mini, GPT-3.5-turbo</small>
+                    </div>
+                    <div class="api-setup-group">
+                        <label for="anthropicKey">Anthropic API Key (Optional):</label>
+                        <input type="password" id="anthropicKey" placeholder="sk-ant-...">
+                        <small>For Claude-3.5-Sonnet, Claude-3-Haiku</small>
+                    </div>
+                    <div class="api-setup-group">
+                        <label for="geminiKey">Google Gemini API Key (Optional):</label>
+                        <input type="password" id="geminiKey" placeholder="AI...">
+                        <small>For Gemini-1.5-Pro, Gemini-1.5-Flash</small>
+                    </div>
+                    <div class="setup-note">
+                        <strong>Note:</strong> You can provide one or more API keys. The app will automatically generate variations from all available models. Keys are stored securely in your browser only.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="saveApiKeys" class="btn-primary">Save & Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <main>
+            <div class="input-section">
+                <div class="ai-status-section">
+                    <div class="ai-models-status">
+                        <h3>Available AI Models</h3>
+                        <div id="modelsStatus" class="models-grid">
+                            <!-- Model status indicators will be populated here -->
+                        </div>
+                        <button id="reconfigureApi" class="btn-link">Reconfigure API Keys</button>
+                        <button id="resetApi" class="btn-link" style="color: #dc3545; margin-left: 10px;">Reset All Keys</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="topic">Topic or Main Message:</label>
+                    <input type="text" id="topic" placeholder="Enter your main topic or message">
+                </div>
+
+
+                <div class="form-group">
+                    <label for="tone">Tone:</label>
+                    <select id="tone">
+                        <option value="professional">Professional</option>
+                        <option value="casual">Casual</option>
+                        <option value="funny">Funny</option>
+                        <option value="inspirational">Inspirational</option>
+                        <option value="educational">Educational</option>
+                        <option value="promotional">Promotional</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="keywords">Keywords (comma-separated):</label>
+                    <input type="text" id="keywords" placeholder="keyword1, keyword2, keyword3">
+                </div>
+
+                <div class="form-group">
+                    <label for="includeHashtags">
+                        <input type="checkbox" id="includeHashtags" checked>
+                        Include hashtags
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="includeEmojis">
+                        <input type="checkbox" id="includeEmojis" checked>
+                        Include emojis
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="includeCallToAction">
+                        <input type="checkbox" id="includeCallToAction" checked>
+                        Include call-to-action
+                    </label>
+                </div>
+
+                <div class="generation-info">
+                    <p><strong>AI Generation Mode:</strong> The app will create highly engaging, viral-worthy posts for ALL social media platforms using all available AI models. Each post is optimized for maximum user interaction and engagement.</p>
+                </div>
+
+                <button id="generateBtn" class="generate-btn">Generate Posts</button>
+            </div>
+
+            <div class="output-section">
+                <div class="variations-container">
+                    <div class="variations-header">
+                        <h3>Generated Posts by Platform</h3>
+                        <div class="generation-progress">
+                            <span id="generationStatus">Ready to generate</span>
+                            <div id="progressBar" class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="platform-tabs">
+                        <button class="platform-tab active" data-platform="twitter">
+                            <span class="platform-icon">🐦</span>
+                            Twitter/X
+                            <span class="character-limit">280</span>
+                        </button>
+                        <button class="platform-tab" data-platform="threads">
+                            <span class="platform-icon">📱</span>
+                            Threads
+                            <span class="character-limit">500</span>
+                        </button>
+                        <button class="platform-tab" data-platform="bluesky">
+                            <span class="platform-icon">🦋</span>
+                            Bluesky
+                            <span class="character-limit">300</span>
+                        </button>
+                        <button class="platform-tab" data-platform="instagram">
+                            <span class="platform-icon">📸</span>
+                            Instagram
+                            <span class="character-limit">2200</span>
+                        </button>
+                        <button class="platform-tab" data-platform="facebook">
+                            <span class="platform-icon">👥</span>
+                            Facebook
+                            <span class="character-limit">63206</span>
+                        </button>
+                        <button class="platform-tab" data-platform="tiktok">
+                            <span class="platform-icon">🎵</span>
+                            TikTok
+                            <span class="character-limit">150</span>
+                        </button>
+                        <button class="platform-tab" data-platform="generic">
+                            <span class="platform-icon">🌐</span>
+                            Generic
+                            <span class="character-limit">500</span>
+                        </button>
+                    </div>
+                    
+                    <div class="platform-content">
+                        <div id="twitter-content" class="platform-variations active">
+                            <div class="variations-grid" data-platform="twitter"></div>
+                        </div>
+                        <div id="threads-content" class="platform-variations">
+                            <div class="variations-grid" data-platform="threads"></div>
+                        </div>
+                        <div id="bluesky-content" class="platform-variations">
+                            <div class="variations-grid" data-platform="bluesky"></div>
+                        </div>
+                        <div id="instagram-content" class="platform-variations">
+                            <div class="variations-grid" data-platform="instagram"></div>
+                        </div>
+                        <div id="facebook-content" class="platform-variations">
+                            <div class="variations-grid" data-platform="facebook"></div>
+                        </div>
+                        <div id="tiktok-content" class="platform-variations">
+                            <div class="variations-grid" data-platform="tiktok"></div>
+                        </div>
+                        <div id="generic-content" class="platform-variations">
+                            <div class="variations-grid" data-platform="generic"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="hashtag-suggestions">
+                    <h3>Suggested Hashtags</h3>
+                    <div id="hashtagList" class="hashtag-container"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    
+</body>
+</html>
