@@ -40,13 +40,12 @@ export default async function handler(req, res) {
         
         console.log(`Hugging Face request for model: ${model}`);
         
-        // Format the prompt for Llama 3.1 Instruct format
-        const formattedPrompt = `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-
-You are a social media expert who creates engaging posts. Create unique, high-quality content optimized for the specified platform. Be creative, engaging, and authentic.<|eot_id|><|start_header_id|>user<|end_header_id|>
-
-${prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-
+        // Format the prompt for Phi-3.5 chat format
+        const formattedPrompt = `<|system|>
+You are a social media expert who creates engaging posts. Create unique, high-quality content optimized for the specified platform. Be creative, engaging, and authentic.<|end|>
+<|user|>
+${prompt}<|end|>
+<|assistant|>
 `;
         
         const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
@@ -77,6 +76,22 @@ ${prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
                 res.status(503).json({ 
                     error: 'Model is currently loading. Please try again in a few minutes.',
                     details: 'Hugging Face models need time to load when not recently used'
+                });
+                return;
+            }
+            
+            if (response.status === 404) {
+                res.status(404).json({ 
+                    error: 'Model not found or requires special access.',
+                    details: 'Some models like Llama require accepting a license agreement on Hugging Face first. Try using a different model or check the model page on huggingface.co'
+                });
+                return;
+            }
+            
+            if (response.status === 403) {
+                res.status(403).json({ 
+                    error: 'Access denied to this model.',
+                    details: 'This model may require accepting a license agreement or have access restrictions. Check the model page on huggingface.co'
                 });
                 return;
             }
